@@ -1,14 +1,39 @@
-<?php
+index() {
+        $instructors = Instructor::Latest()->paginate(10);
+        return view('instructors.index', ['instructors'=>$instructors]);
+    }
 
-namespace App\Http\Controllers;
+    public function create() {
+        return view('instructors.create');
+    }
 
-use Illuminate\Http\Request;
-use App\Instructor;
+    public function store(Request $request) {
+        $this->validate($request, [
+            'user_id' => 'required|numeric',
+            'aoe' => 'required',
+            'rating' => 'required|numeric',
+        ]);
 
-class InstructorController extends Controller
-{
-    public function index() {
-        $instructors = Instructor::get();
-        return view('instructors.index', compact('instructors'));
+        Instructor::create([
+            'user_id' => $request['user_id'],
+            'aoe' => $request['aoe'],
+            'rating' => $request['rating'],
+        ]);
+
+
+        return redirect('/instructors')->with('info', 'New instructor has been added.');
+    }
+    public function edit($id) {
+        $instructor = Instructor::find($id);
+
+        return view('instructors.edit', ['instructor'=>$instructor]);
+    }
+
+    public function update(Request $request, $id) {
+        $instructor = Instructor::find($id);
+
+        $instructor->update($request->all());
+
+        return redirect('/instructors')->with('info', "The record of $instructor->user_id $instructor->aoe has been updated. ");
     }
 }
