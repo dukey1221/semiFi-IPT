@@ -1,4 +1,13 @@
-index() {
+<?php
+
+namespace App\Http\Controllers;
+
+use Illuminate\Http\Request;
+use App\Instructor;
+
+class InstructorController extends Controller
+{
+    public function index() {
         $instructors = Instructor::Latest()->paginate(10);
         return view('instructors.index', ['instructors'=>$instructors]);
     }
@@ -35,5 +44,12 @@ index() {
         $instructor->update($request->all());
 
         return redirect('/instructors')->with('info', "The record of $instructor->user_id $instructor->aoe has been updated. ");
+    }
+    public function delete(Request $request){
+        $instructorId = $request['instructor_id'];
+        $instructor = Instructor::find($instructorId);
+        $name = $instructor->user->fname . " " . $instructor->user->lname;
+        $instructor->delete();
+        return  redirect('/instructors')->with('info', "The record of $name has been deleted successfully.");
     }
 }
